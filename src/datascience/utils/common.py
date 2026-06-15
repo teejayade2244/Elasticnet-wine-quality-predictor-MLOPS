@@ -3,11 +3,30 @@ import yaml
 from src.datascience import logger
 import json
 import joblib
-from ensure import ensure_annotations
-from box import ConfigBox
+try:
+    from ensure import ensure_annotations
+except Exception:
+    # Fallback no-op decorator if `ensure` package or symbol is missing
+    def ensure_annotations(func):
+        return func
+try:
+    from box import ConfigBox
+    from box.exceptions import BoxValueError
+except Exception:
+    # Fallback if `python-box` is not installed: simple attribute-accessible mapping
+    class ConfigBox(dict):
+        def __getattr__(self, name):
+            val = self.get(name)
+            if isinstance(val, dict):
+                return ConfigBox(val)
+            return val
+        def __setattr__(self, name, value):
+            self[name] = value
+
+    class BoxValueError(Exception):
+        pass
 from pathlib import Path
 from typing import Any
-from box.exceptions import BoxValueError
 
 
 @ensure_annotations

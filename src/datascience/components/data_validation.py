@@ -5,7 +5,7 @@ import pandas as pd
 from src.datascience.entity.config_entity import DataValidationConfig
 
 
-class DataValiadtion:
+class DataValidation:
     def __init__(self, config: DataValidationConfig):
         self.config = config
 
